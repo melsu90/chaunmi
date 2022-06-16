@@ -1,6 +1,8 @@
 package com.ryan.github.view.offline;
 
-import android.support.v4.util.LruCache;
+
+
+import androidx.collection.LruCache;
 
 import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.CacheConfig;

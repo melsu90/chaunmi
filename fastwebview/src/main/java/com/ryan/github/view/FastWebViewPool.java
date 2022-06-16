@@ -2,7 +2,7 @@ package com.ryan.github.view;
 
 import android.content.Context;
 import android.content.MutableContextWrapper;
-import android.support.v4.util.Pools;
+import androidx.core.util.Pools;
 
 import com.ryan.github.view.utils.LogUtils;
 import com.ryan.github.view.webview.BuildConfig;
