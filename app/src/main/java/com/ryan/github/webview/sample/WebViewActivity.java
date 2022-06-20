@@ -1,10 +1,10 @@
 package com.ryan.github.webview.sample;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.CookieManager;
@@ -44,9 +44,9 @@ import static com.ryan.github.webview.sample.MainActivity.sUseWebViewPool;
  * Created by Ryan
  * at 2019/11/4
  */
-public class WebViewActivity extends AppCompatActivity {
+public class WebViewActivity extends Activity {
 
-    private static final String TAG = "FastWebView";
+    private static final String TAG = "FastWebView_activity";
     private FastWebView fastWebView;
     private long initStartTime;
     private long startTime;
@@ -104,6 +104,8 @@ public class WebViewActivity extends AppCompatActivity {
         fastWebView.addResourceInterceptor(new ResourceInterceptor() {
             @Override
             public WebResource load(Chain chain) {
+                String url = chain.getRequest().getUrl();
+                Log.d(TAG, " load url: " + url);
                 return chain.process(chain.getRequest());
             }
         });

@@ -1,8 +1,14 @@
 package com.ryan.github.view.offline;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.ryan.github.view.utils.MD5Utils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -73,6 +79,10 @@ public class CacheRequest {
     }
 
     private static String generateKey(String url) {
-        return MD5Utils.getMD5(URLEncoder.encode(url), false);
+        try {
+            return MD5Utils.getMD5(URLEncoder.encode(url, StandardCharsets.UTF_8.toString()), false);
+        }catch (Exception e) {
+            return url;
+        }
     }
 }

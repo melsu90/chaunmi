@@ -28,8 +28,8 @@ import okio.Okio;
  */
 public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor {
 
-    private static final int ENTRY_META = 0;
-    private static final int ENTRY_BODY = 1;
+    private static final int ENTRY_META = 0; //存状态码及headers相关
+    private static final int ENTRY_BODY = 1; //具体数值
     private static final int ENTRY_COUNT = 2;
     private DiskLruCache mDiskLruCache;
     private CacheConfig mCacheConfig;
@@ -46,6 +46,7 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
         int version = mCacheConfig.getVersion();
         long cacheSize = mCacheConfig.getDiskCacheSize();
         try {
+            //ENTRY_COUNT是指一个key对应几个value
             mDiskLruCache = DiskLruCache.open(new File(dir), version, ENTRY_COUNT, cacheSize);
         } catch (IOException e) {
             e.printStackTrace();

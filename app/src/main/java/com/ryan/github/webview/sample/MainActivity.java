@@ -1,13 +1,13 @@
 package com.ryan.github.webview.sample;
 
+import android.app.Activity;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     public static boolean sUseWebViewPool = false;
 
