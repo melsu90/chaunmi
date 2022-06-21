@@ -5,7 +5,7 @@ import java.util.Set;
 
 /**
  * default filter.
- * 可缓存资源白名单
+ * 可缓存资源白名单，由自己缓存，不被Okhttp缓存
  * <p>
  * Created by Ryan
  * 2018/2/11 下午3:16

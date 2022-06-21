@@ -1,12 +1,7 @@
 package com.ryan.github.view.offline;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.ryan.github.view.utils.MD5Utils;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

@@ -11,6 +11,7 @@ import java.util.Map;
 public class SourceRequest {
 
     private String url;
+    //是否由okhttp缓存
     private boolean cacheable;
     private Map<String, String> headers;
     private String userAgent;
