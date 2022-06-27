@@ -49,6 +49,11 @@ public class DefaultWebResponseGenerator implements WebResourceResponseGenerator
         if (TextUtils.isEmpty(urlMime)) {
             return null;
         }
+
+        InputStream bis = resource.getInputStream();
+        if(bis != null) {
+            return new WebResourceResponse(urlMime, charset, bis);
+        }
         byte[] resourceBytes = resource.getOriginBytes();
         if (resourceBytes == null || resourceBytes.length < 0) {
             return null;
@@ -57,7 +62,7 @@ public class DefaultWebResponseGenerator implements WebResourceResponseGenerator
             LogUtils.d("the response bytes can not be empty if we get 304.");
             return null;
         }
-        InputStream bis = new ByteArrayInputStream(resourceBytes);
+        bis = new ByteArrayInputStream(resourceBytes);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int status = resource.getResponseCode();
             String reasonPhrase = resource.getReasonPhrase();

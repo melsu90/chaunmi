@@ -14,6 +14,7 @@ import java.io.File;
 public class CacheConfig {
 
     private String mCacheDir;
+    private String mAssetsDir;
     private int mVersion;
     private long mDiskCacheSize;
     private int mMemCacheSize;
@@ -25,6 +26,10 @@ public class CacheConfig {
 
     public String getCacheDir() {
         return mCacheDir;
+    }
+
+    public String getAssetsDir() {
+        return mAssetsDir;
     }
 
     public int getVersion() {
@@ -52,6 +57,7 @@ public class CacheConfig {
         private static final String CACHE_DIR_NAME = "cached_webview_force";
         private static final int DEFAULT_DISK_CACHE_SIZE = 100 * 1024 * 1024;
         private String cacheDir;
+        private String assetsDir;
         private int version;
         private long diskCacheSize = DEFAULT_DISK_CACHE_SIZE;
         private int memoryCacheSize = MemorySizeCalculator.getSize();
@@ -64,6 +70,11 @@ public class CacheConfig {
 
         public Builder setCacheDir(String cacheDir) {
             this.cacheDir = cacheDir;
+            return this;
+        }
+
+        public Builder setAssetsDir(String assetsDir) {
+            this.assetsDir = assetsDir;
             return this;
         }
 
@@ -94,6 +105,7 @@ public class CacheConfig {
             config.mDiskCacheSize = diskCacheSize;
             config.mFilter = filter;
             config.mMemCacheSize = memoryCacheSize;
+            config.mAssetsDir = assetsDir;
             return config;
         }
     }

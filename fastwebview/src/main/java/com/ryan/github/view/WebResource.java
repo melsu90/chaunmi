@@ -1,5 +1,6 @@
 package com.ryan.github.view;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import okhttp3.internal.http.StatusLine;
@@ -32,6 +33,16 @@ public class WebResource {
     private boolean isCacheByOurselves = false;
 
     private byte[] originBytes;
+
+    private InputStream inputStream = null;
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
+    public InputStream getInputStream() {
+        return this.inputStream;
+    }
 
     public void setModified(boolean modified) {
         isModified = modified;

@@ -1,10 +1,12 @@
 package com.ryan.github.view.offline;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.webkit.WebResourceResponse;
 
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.WebResource;
+import com.ryan.github.view.utils.AssetsLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +33,16 @@ public class OfflineServerImpl implements OfflineServer {
     private List<ResourceInterceptor> buildForceModeChain(Context context, CacheConfig cacheConfig) {
         if (mForceModeChainList == null) {
             int interceptorsCount = 3 + getBaseInterceptorsCount();
+            boolean useAssetsInterceptor = !TextUtils.isEmpty(cacheConfig.getAssetsDir());
+            if(useAssetsInterceptor) {
+                interceptorsCount += 1;
+            }
             List<ResourceInterceptor> interceptors = new ArrayList<>(interceptorsCount);
             if (mBaseInterceptorList != null && !mBaseInterceptorList.isEmpty()) {
                 interceptors.addAll(mBaseInterceptorList);
+            }
+            if(useAssetsInterceptor) {
+                interceptors.add(new AssetResourceInterceptor(context, cacheConfig));
             }
             interceptors.add(MemResourceInterceptor.getInstance(cacheConfig));
             interceptors.add(new DiskResourceInterceptor(cacheConfig));

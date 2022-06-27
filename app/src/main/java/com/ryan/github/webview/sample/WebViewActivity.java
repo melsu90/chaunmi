@@ -98,7 +98,8 @@ public class WebViewActivity extends Activity {
         }
         CacheConfig config = new CacheConfig.Builder(this)
                 .setCacheDir(getCacheDir() + File.separator + "custom")
-                .setExtensionFilter(new CustomMimeTypeFilter())
+        //        .setExtensionFilter(new CustomMimeTypeFilter())
+        //        .setAssetsDir("static")
                 .build();
         fastWebView.setCacheMode(FastCacheMode.FORCE, config);
         fastWebView.addResourceInterceptor(new ResourceInterceptor() {
@@ -113,7 +114,7 @@ public class WebViewActivity extends Activity {
         Map<String, String> headers = new HashMap<>();
         headers.put("custom", "test");
 
-        String url = "https://github.com/Ryan-Shz";
+        String url = "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
 
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
