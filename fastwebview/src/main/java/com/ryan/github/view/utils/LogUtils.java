@@ -9,7 +9,7 @@ import android.util.Log;
 public class LogUtils {
 
     private static final String TAG = "FastWebView";
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     public static void d(String message) {
         if (DEBUG) {

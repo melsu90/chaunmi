@@ -22,6 +22,7 @@ import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.config.FastCacheMode;
 import com.ryan.github.view.offline.Destroyable;
 import com.ryan.github.view.offline.ResourceInterceptor;
+import com.ryan.github.view.utils.LogUtils;
 
 /**
  * WebViewClient decorator for intercepting resource loading.
@@ -261,6 +262,7 @@ class InnerFastClient extends WebViewClient implements FastOpenApi, Destroyable 
                 return response;
             }
         }
+        LogUtils.d(" onIntercept url: " + request.getUrl());
         return loadFromWebViewCache(request);
     }
 

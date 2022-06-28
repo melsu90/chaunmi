@@ -7,6 +7,12 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import com.ryan.github.view.FastWebView;
+import com.ryan.github.view.config.CacheConfig;
+import com.ryan.github.view.config.FastCacheMode;
+
+import java.io.File;
+
 public class MainActivity extends Activity {
 
     public static boolean sUseWebViewPool = false;
@@ -31,6 +37,13 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        CacheConfig config = new CacheConfig.Builder(this)
+                .setCacheDir(getCacheDir() + File.separator + "custom")
+                //        .setExtensionFilter(new CustomMimeTypeFilter())
+                //        .setAssetsDir("static")
+                .build();
+        FastWebView.preload(this, WebViewActivity.url, FastCacheMode.FORCE, config);
     }
 }
 

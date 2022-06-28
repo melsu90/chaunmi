@@ -1,5 +1,6 @@
 package com.ryan.github.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
@@ -74,8 +75,15 @@ public class FastWebView extends WebView implements FastOpenApi {
         getFastCookieManager().destroy();
     }
 
-    public static void preload(Context context, String url) {
-        new FastWebView(context.getApplicationContext()).loadUrl(url);
+    @SuppressLint("SetJavaScriptEnabled")
+    public static void preload(Context context, String url, FastCacheMode cacheMode, CacheConfig cacheConfig) {
+        FastWebView webView = new FastWebView(context);
+        webView.setCacheMode(cacheMode, cacheConfig);
+        WebSettings webSettings = webView.getSettings();
+        //必须要加下面这一句，否则不会去加载通过js加载的js和css等资源
+        webSettings.setJavaScriptEnabled(true);
+        webView.loadUrl(url);
+        LogUtils.d("preload url: " + url);
     }
 
     public void setCacheMode(FastCacheMode mode) {

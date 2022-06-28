@@ -52,7 +52,7 @@ public class WebViewActivity extends Activity {
     private long initStartTime;
     private long startTime;
 
-    String url = "http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
+    public static final String url = "http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
@@ -99,12 +99,14 @@ public class WebViewActivity extends Activity {
             cookieManager.setAcceptThirdPartyCookies(fastWebView, true);
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         }
+
         CacheConfig config = new CacheConfig.Builder(this)
                 .setCacheDir(getCacheDir() + File.separator + "custom")
         //        .setExtensionFilter(new CustomMimeTypeFilter())
         //        .setAssetsDir("static")
                 .build();
         fastWebView.setCacheMode(FastCacheMode.FORCE, config);
+
         fastWebView.addResourceInterceptor(new ResourceInterceptor() {
             @Override
             public WebResource load(Chain chain) {
@@ -113,10 +115,9 @@ public class WebViewActivity extends Activity {
                 return chain.process(chain.getRequest());
             }
         });
-        fastWebView.addJavascriptInterface(this, "android");
-        Map<String, String> headers = new HashMap<>();
-        headers.put("custom", "test");
 
+
+        fastWebView.addJavascriptInterface(this, "android");
 
 
         CookieSyncManager.createInstance(this);
@@ -146,6 +147,8 @@ public class WebViewActivity extends Activity {
             }
         });
 
+        Map<String, String> headers = new HashMap<>();
+        headers.put("custom", "test");
         fastWebView.loadUrl(url, headers);
     }
 
