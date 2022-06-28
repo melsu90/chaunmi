@@ -12,29 +12,38 @@ public class SourceRequest {
 
     private String url;
     //是否由okhttp缓存
-    private boolean cacheable;
+    private boolean isCacheByOkHttp;
+    //由自己缓存
+    private boolean isCacheByOurself;
     private Map<String, String> headers;
     private String userAgent;
     private int webViewCache;
 
-    public SourceRequest(CacheRequest request, boolean cacheable){
-        this.cacheable = cacheable;
+    public SourceRequest(CacheRequest request){
         this.url = request.getUrl();
         this.headers = request.getHeaders();
         this.userAgent = request.getUserAgent();
         this.webViewCache = request.getWebViewCacheMode();
     }
 
+    public void setCacheByOurself(boolean cacheByOurself) {
+        this.isCacheByOurself = cacheByOurself;
+    }
+
+    public boolean isCacheByOurself() {
+        return this.isCacheByOurself;
+    }
+
     public String getUrl() {
         return url;
     }
 
-    public void setCacheable(boolean cacheable) {
-        this.cacheable = cacheable;
+    public void setCacheByOkHttp(boolean isCacheByOkHttp) {
+        this.isCacheByOkHttp = isCacheByOkHttp;
     }
 
-    public boolean isCacheable() {
-        return cacheable;
+    public boolean isCacheableByOkHttp() {
+        return isCacheByOkHttp;
     }
 
     public void setUrl(String url) {

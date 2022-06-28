@@ -6,6 +6,7 @@ import android.webkit.WebResourceResponse;
 
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.WebResource;
+import com.ryan.github.view.config.FastCacheMode;
 import com.ryan.github.view.utils.AssetsLoader;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class OfflineServerImpl implements OfflineServer {
         mResourceResponseGenerator = new DefaultWebResponseGenerator();
     }
 
+    /**
+     *  {@link  FastCacheMode} FORCE
+     */
     private List<ResourceInterceptor> buildForceModeChain(Context context, CacheConfig cacheConfig) {
         if (mForceModeChainList == null) {
             int interceptorsCount = 3 + getBaseInterceptorsCount();
@@ -52,6 +56,9 @@ public class OfflineServerImpl implements OfflineServer {
         return mForceModeChainList;
     }
 
+    /**
+     *  {@link  FastCacheMode} NORMAL
+     */
     private List<ResourceInterceptor> buildDefaultModeChain(Context context) {
         if (mDefaultModeChainList == null) {
             int interceptorsCount = 1 + getBaseInterceptorsCount();

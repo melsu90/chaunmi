@@ -50,8 +50,8 @@ public class DefaultMimeTypeFilter implements MimeTypeFilter {
     }
 
     @Override
-    public boolean isFilter(String extension) {
-        return !mFilterMimeTypes.contains(extension);
+    public boolean isContains(String mimeType) {
+        return mFilterMimeTypes.contains(mimeType);
     }
 
     @Override

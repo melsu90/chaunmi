@@ -111,8 +111,10 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
             return webResource;
         }
         webResource = chain.process(request);
-        if (webResource != null && (webResource.isCacheByOurselves() || isRealMimeTypeCacheable(webResource))) {
-            cacheToDisk(request.getKey(), webResource);
+        if(webResource != null) {
+            if(webResource.isCacheByOurselves() || isRealMimeTypeCacheable(webResource)) {
+                cacheToDisk(request.getKey(), webResource);
+            }
         }
         return webResource;
     }
@@ -186,19 +188,8 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
             return false;
         }
         Map<String, String> headers = resource.getResponseHeaders();
-        String contentType = null;
-        if (headers != null) {
-            String uppercaseKey = "Content-Type";
-            String lowercaseKey = uppercaseKey.toLowerCase();
-            String contentTypeValue = headers.containsKey(uppercaseKey) ? headers.get(uppercaseKey) : headers.get(lowercaseKey);
-            if (!TextUtils.isEmpty(contentTypeValue)) {
-                String[] contentTypeArray = contentTypeValue.split(";");
-                if (contentTypeArray.length >= 1) {
-                    contentType = contentTypeArray[0];
-                }
-            }
-        }
-        return contentType != null && !mCacheConfig.getFilter().isFilter(contentType);
+        String contentType = HeaderUtils.getContentType(headers);
+        return contentType != null && mCacheConfig.getFilter().isContains(contentType);
     }
 }
 

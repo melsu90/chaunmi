@@ -7,6 +7,7 @@ import android.content.Context;
 import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.utils.AssetsLoader;
+import com.ryan.github.view.utils.LogUtils;
 
 import java.io.InputStream;
 
@@ -35,6 +36,7 @@ public class AssetResourceInterceptor implements Destroyable, ResourceIntercepto
             webResource.setInputStream(inputStream);
             webResource.setResponseCode(HTTP_OK);
             webResource.setReasonPhrase(PhraseList.getPhrase(HTTP_OK));
+            LogUtils.d(String.format("asset cache hit: %s", request.getUrl()));
             return webResource;
         }
         return chain.process(request);

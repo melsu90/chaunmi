@@ -28,13 +28,9 @@ public class ForceRemoteResourceInterceptor implements Destroyable, ResourceInte
     public WebResource load(Chain chain) {
         CacheRequest request = chain.getRequest();
         String mime = request.getMime();
-        boolean isFilter;
-        if (TextUtils.isEmpty(mime)) {
-            isFilter = isFilterHtml();
-        } else {
-            isFilter = mMimeTypeFilter.isFilter(mime);
-        }
-        SourceRequest sourceRequest = new SourceRequest(request, isFilter);
+        boolean cacheable = mMimeTypeFilter.isContains(mime);
+        SourceRequest sourceRequest = new SourceRequest(request);
+        sourceRequest.setCacheByOurself(cacheable);
         WebResource resource = mResourceLoader.getResource(sourceRequest);
         if (resource != null) {
             return resource;
@@ -47,9 +43,5 @@ public class ForceRemoteResourceInterceptor implements Destroyable, ResourceInte
         if (mMimeTypeFilter != null) {
             mMimeTypeFilter.clear();
         }
-    }
-
-    private boolean isFilterHtml() {
-        return mMimeTypeFilter.isFilter("text/html");
     }
 }

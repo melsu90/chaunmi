@@ -8,7 +8,7 @@ package com.ryan.github.view.config;
  */
 public interface MimeTypeFilter {
 
-    boolean isFilter(String mimeType);
+    boolean isContains(String mimeType);
 
     void addMimeType(String mimeType);
 

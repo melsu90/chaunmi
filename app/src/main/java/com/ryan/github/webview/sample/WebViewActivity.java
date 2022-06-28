@@ -2,6 +2,7 @@ package com.ryan.github.webview.sample;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -50,6 +51,8 @@ public class WebViewActivity extends Activity {
     private FastWebView fastWebView;
     private long initStartTime;
     private long startTime;
+
+    String url = "http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
@@ -114,7 +117,7 @@ public class WebViewActivity extends Activity {
         Map<String, String> headers = new HashMap<>();
         headers.put("custom", "test");
 
-        String url = "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
+
 
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
@@ -170,10 +173,24 @@ public class WebViewActivity extends Activity {
     public class MonitorWebViewClient extends WebViewClient {
 
         private boolean first = true;
+        long startTime = 0;
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            startTime = System.currentTimeMillis();
+            LogUtils.d(" onPageStarted url: " + url);
+        }
+
+        @Override
+        public void onLoadResource(WebView view, String url) {
+            super.onLoadResource(view, url);
+            LogUtils.d(" onLoadResource url: " + url);
+        }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+            LogUtils.d(" onPageFinished cost: " + (System.currentTimeMillis() - startTime) + ", url: " + url);
             view.getSettings().setBlockNetworkImage(false);
             view.loadUrl("javascript:android.sendResource(JSON.stringify(window.performance.timing))");
         }

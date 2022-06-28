@@ -54,4 +54,26 @@ public class HeaderUtils {
         }
         return headersMap;
     }
+
+    /**
+     * 根据header返回contentType
+     * @param headers
+     * @return
+     */
+    public static String getContentType(Map<String, String> headers) {
+        String contentType = null;
+        if (headers != null) {
+            String uppercaseKey = "Content-Type";
+            String lowercaseKey = uppercaseKey.toLowerCase();
+            String contentTypeValue = headers.containsKey(uppercaseKey) ? headers.get(uppercaseKey) : headers.get(lowercaseKey);
+            if (!TextUtils.isEmpty(contentTypeValue)) {
+                String[] contentTypeArray = contentTypeValue.split(";");
+                if (contentTypeArray.length >= 1) {
+                    contentType = contentTypeArray[0];
+                }
+            }
+        }
+        return contentType;
+    }
+
 }

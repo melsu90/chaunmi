@@ -22,7 +22,8 @@ public class DefaultRemoteResourceInterceptor implements ResourceInterceptor {
     @Override
     public WebResource load(Chain chain) {
         CacheRequest request = chain.getRequest();
-        SourceRequest sourceRequest = new SourceRequest(request, true);
+        SourceRequest sourceRequest = new SourceRequest(request);
+        sourceRequest.setCacheByOkHttp(true);
         WebResource resource = mResourceLoader.getResource(sourceRequest);
         if (resource != null) {
             return resource;

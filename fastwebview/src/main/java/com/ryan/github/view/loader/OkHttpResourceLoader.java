@@ -46,7 +46,7 @@ public class OkHttpResourceLoader implements ResourceLoader {
     public WebResource getResource(SourceRequest sourceRequest) {
         String url = sourceRequest.getUrl();
         LogUtils.d(String.format("load url: %s", url));
-        boolean isCacheByOkHttp = sourceRequest.isCacheable();
+        boolean isCacheByOkHttp = sourceRequest.isCacheableByOkHttp();
         OkHttpClient client = OkHttpClientProvider.get(mContext);
         CacheControl cacheControl = getCacheControl(sourceRequest.getWebViewCache(), isCacheByOkHttp);
         String userAgent = sourceRequest.getUserAgent();
@@ -98,7 +98,7 @@ public class OkHttpResourceLoader implements ResourceLoader {
                     remoteResource.setOriginBytes(responseBody.bytes());
                 }
                 remoteResource.setResponseHeaders(HeaderUtils.generateHeadersMap(response.headers()));
-                remoteResource.setCacheByOurselves(!isCacheByOkHttp);
+                remoteResource.setCacheByOurselves(sourceRequest.isCacheByOurself());
                 return remoteResource;
             }
         } catch (IOException e) {
