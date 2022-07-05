@@ -1,15 +1,18 @@
 package com.ryan.github.view.offline;
 
+
+import static com.ryan.github.view.offline.DiskCacheManager.ENTRY_BODY;
+import static com.ryan.github.view.offline.DiskCacheManager.ENTRY_COUNT;
+import static com.ryan.github.view.offline.DiskCacheManager.ENTRY_META;
+
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.CacheConfig;
-import com.ryan.github.view.utils.StreamUtils;
-import com.ryan.github.view.utils.lru.DiskLruCache;
 import com.ryan.github.view.utils.HeaderUtils;
 import com.ryan.github.view.utils.LogUtils;
-import com.ryan.github.view.webview.BuildConfig;
+import com.ryan.github.view.utils.StreamUtils;
+import com.ryan.github.view.utils.lru.DiskLruCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +31,6 @@ import okio.Okio;
  */
 public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor {
 
-    private static final int ENTRY_META = 0; //存状态码及headers相关
-    private static final int ENTRY_BODY = 1; //具体数值
-    private static final int ENTRY_COUNT = 2;
-    private DiskLruCache mDiskLruCache;
     private CacheConfig mCacheConfig;
 
     DiskResourceInterceptor(CacheConfig cacheConfig) {
@@ -39,26 +38,18 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
     }
 
     private synchronized void ensureDiskLruCacheCreate() {
-        if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
-            return;
-        }
         String dir = mCacheConfig.getCacheDir();
         int version = mCacheConfig.getVersion();
         long cacheSize = mCacheConfig.getDiskCacheSize();
-        try {
-            //ENTRY_COUNT是指一个key对应几个value
-            mDiskLruCache = DiskLruCache.open(new File(dir), version, ENTRY_COUNT, cacheSize);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DiskCacheManager.getInstance().init(new File(dir), version, cacheSize);
     }
 
     private WebResource getFromDiskCache(String key) {
         try {
-            if (mDiskLruCache.isClosed()) {
+            if (!DiskCacheManager.getInstance().checkAvailable()) {
                 return null;
             }
-            DiskLruCache.Snapshot snapshot = mDiskLruCache.get(key);
+            DiskLruCache.Snapshot snapshot = DiskCacheManager.getInstance().get(key);
             if (snapshot != null) {
                 BufferedSource entrySource = Okio.buffer(Okio.source(snapshot.getInputStream(ENTRY_META)));
                 // 1. read status
@@ -108,6 +99,7 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
         WebResource webResource = getFromDiskCache(request.getKey());
         if (webResource != null && isRealMimeTypeCacheable(webResource)) {
             LogUtils.d(String.format("disk cache hit: %s", request.getUrl()));
+            webResource.setCacheByOurselves(true);
             return webResource;
         }
         webResource = chain.process(request);
@@ -121,24 +113,22 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
 
     @Override
     public void destroy() {
-        if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
-            try {
-                mDiskLruCache.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//            try {
+//                DiskCacheManager.getInstance().close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
     }
 
     private void cacheToDisk(String key, WebResource webResource) {
         if (webResource == null || !webResource.isCacheable()) {
             return;
         }
-        if (mDiskLruCache.isClosed()) {
+        if (!DiskCacheManager.getInstance().checkAvailable()) {
             return;
         }
         try {
-            DiskLruCache.Editor editor = mDiskLruCache.edit(key);
+            DiskLruCache.Editor editor = DiskCacheManager.getInstance().edit(key);
             if (editor == null) {
                 LogUtils.d("Another edit is in progress!");
                 return;
@@ -175,7 +165,7 @@ public class DiskResourceInterceptor implements Destroyable, ResourceInterceptor
             LogUtils.e("cache to disk failed. cause by: " + e.getMessage());
             try {
                 // clean the redundant data
-                mDiskLruCache.remove(key);
+                DiskCacheManager.getInstance().remove(key);
             } catch (IOException ignore) {
             }
         } catch (Exception e) {

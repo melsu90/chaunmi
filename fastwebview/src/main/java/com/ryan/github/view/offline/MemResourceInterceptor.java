@@ -8,14 +8,13 @@ import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.utils.LogUtils;
 
+
 /**
  * Created by Ryan
  * on 2020/4/14
  *
  */
 public class MemResourceInterceptor implements ResourceInterceptor, Destroyable {
-
-    private LruCache<String, WebResource> mLruCache;
 
     private static volatile MemResourceInterceptor sInstance;
 
@@ -30,26 +29,26 @@ public class MemResourceInterceptor implements ResourceInterceptor, Destroyable 
         return sInstance;
     }
 
+
+
     private MemResourceInterceptor(CacheConfig cacheConfig) {
         int memorySize = cacheConfig.getMemCacheSize();
         if (memorySize > 0) {
-            mLruCache = new ResourceMemCache(memorySize);
+            LruCacheManager.getInstance().init(memorySize);
         }
     }
 
     @Override
     public WebResource load(Chain chain) {
         CacheRequest request = chain.getRequest();
-        if (mLruCache != null) {
-            WebResource resource = mLruCache.get(request.getKey());
-            if (checkResourceValid(resource)) {
-                LogUtils.d(String.format("mem cache hit: %s", request.getUrl()));
-                return resource;
-            }
+        WebResource resource = LruCacheManager.getInstance().get(request.getKey());
+        if (checkResourceValid(resource)) {
+            LogUtils.d(String.format("mem cache hit: %s", request.getUrl()));
+            return resource;
         }
-        WebResource resource = chain.process(request);
-        if (mLruCache != null && checkResourceValid(resource) && resource.isCacheable() && resource.isCacheByOurselves()) {
-            mLruCache.put(request.getKey(), resource);
+        resource = chain.process(request);
+        if (checkResourceValid(resource) && resource.isCacheable() && resource.isCacheByOurselves()) {
+            LruCacheManager.getInstance().put(request.getKey(), resource);
         }
         return resource;
     }
@@ -62,32 +61,16 @@ public class MemResourceInterceptor implements ResourceInterceptor, Destroyable 
                 && !resource.getResponseHeaders().isEmpty();
     }
 
+    public static boolean isMemInit() {
+        return sInstance != null;
+    }
+
+
     @Override
     public void destroy() {
 //        if (mLruCache != null) {
 //            mLruCache.evictAll();
 //            mLruCache = null;
 //        }
-    }
-
-    private static class ResourceMemCache extends LruCache<String, WebResource> {
-
-        /**
-         * @param maxSize for caches that do not override {@link #sizeOf}, this is
-         *                the maximum number of entries in the cache. For all other caches,
-         *                this is the maximum sum of the sizes of the entries in this cache.
-         */
-        ResourceMemCache(int maxSize) {
-            super(maxSize);
-        }
-
-        @Override
-        protected int sizeOf(String key, WebResource value) {
-            int size = 0;
-            if (value != null && value.getOriginBytes() != null) {
-                size = value.getOriginBytes().length;
-            }
-            return size;
-        }
     }
 }

@@ -12,8 +12,13 @@ import android.webkit.WebViewClient;
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.config.FastCacheMode;
 import com.ryan.github.view.cookie.FastCookieManager;
+import com.ryan.github.view.offline.DiskCacheManager;
+import com.ryan.github.view.offline.LruCacheManager;
 import com.ryan.github.view.offline.ResourceInterceptor;
 import com.ryan.github.view.utils.LogUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Ryan
@@ -52,6 +57,15 @@ public class FastWebView extends WebView implements FastOpenApi {
         release();
         super.destroy();
     }
+
+    public static void clearMemCache() {
+        LruCacheManager.getInstance().clear();
+    }
+
+    public static void clearDiskCache(File directory, int appVersion, long maxSize) throws IOException {
+        DiskCacheManager.getInstance().clear(directory, appVersion, maxSize);
+    }
+
 
     public void release() {
         stopLoading();
