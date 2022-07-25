@@ -8,10 +8,8 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.ryan.github.view.FastWebView;
-import com.ryan.github.view.FastWebViewPool;
-import com.ryan.github.view.config.CacheConfig;
-import com.ryan.github.view.config.FastCacheMode;
+import com.chaunmi.fastwebview.utils.FastWebViewPool;
+import com.chaunmi.fastwebview.config.CacheConfig;
 import com.tencent.smtt.sdk.QbSdk;
 
 import java.io.File;

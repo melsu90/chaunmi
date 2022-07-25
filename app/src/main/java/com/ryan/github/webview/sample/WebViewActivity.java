@@ -18,18 +18,18 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.chaunmi.fastwebview.view.base.WebResource;
 import com.google.gson.Gson;
-import com.ryan.github.view.FastWebView;
-import com.ryan.github.view.FastWebViewPool;
-import com.ryan.github.view.WebResource;
-import com.ryan.github.view.config.CacheConfig;
-import com.ryan.github.view.config.DefaultMimeTypeFilter;
-import com.ryan.github.view.config.FastCacheMode;
-import com.ryan.github.view.cookie.CookieInterceptor;
-import com.ryan.github.view.cookie.FastCookieManager;
-import com.ryan.github.view.offline.Chain;
-import com.ryan.github.view.offline.ResourceInterceptor;
-import com.ryan.github.view.utils.LogUtils;
+import com.chaunmi.fastwebview.view.system.FastWebView;
+import com.chaunmi.fastwebview.utils.FastWebViewPool;
+import com.chaunmi.fastwebview.config.CacheConfig;
+import com.chaunmi.fastwebview.config.DefaultMimeTypeFilter;
+import com.chaunmi.fastwebview.config.FastCacheMode;
+import com.chaunmi.fastwebview.cookie.CookieInterceptor;
+import com.chaunmi.fastwebview.cookie.FastCookieManager;
+import com.chaunmi.fastwebview.offline.Chain;
+import com.chaunmi.fastwebview.offline.ResourceInterceptor;
+import com.chaunmi.fastwebview.utils.LogUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -205,6 +205,47 @@ public class WebViewActivity extends Activity {
                 first = false;
             }
             return super.shouldInterceptRequest(view, request);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            LogUtils.i(" shouldOverrideUrlLoading: " + url);
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            String url = request.getUrl().toString();
+            String scheme = request.getUrl().getScheme();
+            LogUtils.i(" shouldOverrideUrlLoading request: " + url);
+            if(scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")) {
+                return super.shouldOverrideUrlLoading(view, request);
+            }else {
+//                try{
+//                    if(url.startsWith("baiduboxapp://") || url.startsWith("baiduboxlite://" )){
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                        startActivity(intent);
+//                        return true;
+//                    }
+//                }catch (Exception e) {
+//                    LogUtils.e(" shouldOverrideUrlLoading request error: " + e.getLocalizedMessage());
+//                    return false;
+//                }
+//                view.loadUrl(url);
+                return true;
+            }
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+            LogUtils.e(" onReceivedError errorCode: " + errorCode + ", description: " + description + ", failingUrl: " + failingUrl);
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+            super.onReceivedHttpError(view, request, errorResponse);
+            LogUtils.e(" onReceivedHttpError ");
         }
     }
 

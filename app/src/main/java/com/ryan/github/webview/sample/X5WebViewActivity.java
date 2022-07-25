@@ -11,17 +11,18 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
+
+import com.chaunmi.fastwebview.view.base.WebResource;
 import com.google.gson.Gson;
-import com.ryan.github.view.FastWebViewPool;
-import com.ryan.github.view.WebResource;
-import com.ryan.github.view.config.CacheConfig;
-import com.ryan.github.view.config.FastCacheMode;
-import com.ryan.github.view.cookie.CookieInterceptor;
-import com.ryan.github.view.cookie.FastCookieManager;
-import com.ryan.github.view.offline.Chain;
-import com.ryan.github.view.offline.ResourceInterceptor;
-import com.ryan.github.view.utils.LogUtils;
-import com.ryan.github.view.x5.FastX5WebView;
+import com.chaunmi.fastwebview.utils.FastWebViewPool;
+import com.chaunmi.fastwebview.config.CacheConfig;
+import com.chaunmi.fastwebview.config.FastCacheMode;
+import com.chaunmi.fastwebview.cookie.CookieInterceptor;
+import com.chaunmi.fastwebview.cookie.FastCookieManager;
+import com.chaunmi.fastwebview.offline.Chain;
+import com.chaunmi.fastwebview.offline.ResourceInterceptor;
+import com.chaunmi.fastwebview.utils.LogUtils;
+import com.chaunmi.fastwebview.view.x5.FastX5WebView;
 import com.tencent.smtt.export.external.interfaces.SslError;
 import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
@@ -202,39 +203,39 @@ public class X5WebViewActivity extends Activity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             startTime = System.currentTimeMillis();
-            LogUtils.d(" onPageStarted url: " + url);
+            LogUtils.d(" onPageStarted x5 url: " + url);
         }
 
         @Override
         public void onLoadResource(WebView view, String url) {
             super.onLoadResource(view, url);
-            LogUtils.d(" onLoadResource url: " + url);
+            LogUtils.d(" onLoadResource x5 url: " + url);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            LogUtils.d(" onPageFinished cost: " + (System.currentTimeMillis() - startTime) + ", url: " + url);
+            LogUtils.d(" onPageFinished x5 cost: " + (System.currentTimeMillis() - startTime) + ", url: " + url);
             view.getSettings().setBlockNetworkImage(false);
             view.loadUrl("javascript:android.sendResource(JSON.stringify(window.performance.timing))");
         }
 
         @Override
-        public void onReceivedError(WebView webView, int i, String s, String s1) {
-            super.onReceivedError(webView, i, s, s1);
-            LogUtils.e(" onReceivedError:  " + s);
+        public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(webView, errorCode, description, failingUrl);
+            LogUtils.d(" onReceivedError x5 errorCode: " + errorCode + ", description: " + description + ", failingUrl: " + failingUrl);
         }
 
         @Override
         public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
             super.onReceivedError(webView, webResourceRequest, webResourceError);
-            LogUtils.e(" onReceivedError:  ");
+            LogUtils.e(" onReceivedError x5:  ");
         }
 
         @Override
         public void onReceivedHttpError(WebView webView, WebResourceRequest webResourceRequest, WebResourceResponse webResourceResponse) {
             super.onReceivedHttpError(webView, webResourceRequest, webResourceResponse);
-            LogUtils.e(" onReceivedHttpError:  ");
+            LogUtils.e(" onReceivedHttpError x5:  ");
         }
 
         @Override
@@ -246,13 +247,42 @@ public class X5WebViewActivity extends Activity {
         @Override
         public void onDetectedBlankScreen(String s, int i) {
             super.onDetectedBlankScreen(s, i);
-            LogUtils.e(" onDetectedBlankScreen:  " + s);
+            LogUtils.e(" onDetectedBlankScreen x5:  " + s);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            LogUtils.i(" shouldOverrideUrlLoading: " + url);
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            String url = request.getUrl().toString();
+            String scheme = request.getUrl().getScheme();
+            LogUtils.i(" shouldOverrideUrlLoading request: " + url);
+            if(scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")) {
+                return super.shouldOverrideUrlLoading(view, request);
+            }else {
+//                try{
+//                    if(url.startsWith("baiduboxapp://") || url.startsWith("baiduboxlite://" )){
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                        startActivity(intent);
+//                        return true;
+//                    }
+//                }catch (Exception e) {
+//                    LogUtils.e(" shouldOverrideUrlLoading request error: " + e.getLocalizedMessage());
+//                    return false;
+//                }
+//                view.loadUrl(url);
+                return true;
+            }
         }
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             if (first) {
-                LogUtils.d("init cost time: " + (SystemClock.uptimeMillis() - initStartTime));
+                LogUtils.d("init cost time x5:  " + (SystemClock.uptimeMillis() - initStartTime));
                 first = false;
             }
             return super.shouldInterceptRequest(view, request);
