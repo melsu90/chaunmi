@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.ryan.github.view.offline.Destroyable;
 
-import java.net.CookieStore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class FastCookieManager implements Destroyable {
         return SingletonHolder.INSTANCE;
     }
 
-    List<CookieInterceptor> getRequestCookieInterceptors() {
+    public List<CookieInterceptor> getRequestCookieInterceptors() {
         return mRequestCookieInterceptors;
     }
 
@@ -50,7 +49,7 @@ public class FastCookieManager implements Destroyable {
         }
     }
 
-    List<CookieInterceptor> getResponseCookieInterceptors() {
+    public List<CookieInterceptor> getResponseCookieInterceptors() {
         return mResponseCookieInterceptors;
     }
 
@@ -60,7 +59,7 @@ public class FastCookieManager implements Destroyable {
         }
     }
 
-    public CookieJar getCookieJar(Context context) {
+    public CookieJar getCookieJar() {
         return mUserCookieJar != null ? mUserCookieJar : new CookieJarImpl();
     }
 

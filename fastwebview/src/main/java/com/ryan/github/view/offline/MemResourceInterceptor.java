@@ -1,9 +1,6 @@
 package com.ryan.github.view.offline;
 
 
-
-import androidx.collection.LruCache;
-
 import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.utils.LogUtils;
@@ -16,22 +13,7 @@ import com.ryan.github.view.utils.LogUtils;
  */
 public class MemResourceInterceptor implements ResourceInterceptor, Destroyable {
 
-    private static volatile MemResourceInterceptor sInstance;
-
-    public static MemResourceInterceptor getInstance(CacheConfig cacheConfig) {
-        if (sInstance == null) {
-            synchronized (MemResourceInterceptor.class) {
-                if (sInstance == null) {
-                    sInstance = new MemResourceInterceptor(cacheConfig);
-                }
-            }
-        }
-        return sInstance;
-    }
-
-
-
-    private MemResourceInterceptor(CacheConfig cacheConfig) {
+    public MemResourceInterceptor(CacheConfig cacheConfig) {
         int memorySize = cacheConfig.getMemCacheSize();
         if (memorySize > 0) {
             LruCacheManager.getInstance().init(memorySize);
@@ -61,16 +43,9 @@ public class MemResourceInterceptor implements ResourceInterceptor, Destroyable 
                 && !resource.getResponseHeaders().isEmpty();
     }
 
-    public static boolean isMemInit() {
-        return sInstance != null;
-    }
-
 
     @Override
     public void destroy() {
-//        if (mLruCache != null) {
-//            mLruCache.evictAll();
-//            mLruCache = null;
-//        }
+        LruCacheManager.getInstance().destroy();
     }
 }

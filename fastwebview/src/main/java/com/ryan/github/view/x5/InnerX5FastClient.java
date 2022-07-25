@@ -1,22 +1,12 @@
-package com.ryan.github.view;
+package com.ryan.github.view.x5;
 
 import android.graphics.Bitmap;
-import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
-import androidx.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.webkit.ClientCertRequest;
-import android.webkit.HttpAuthHandler;
-import android.webkit.RenderProcessGoneDetail;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+import androidx.annotation.RequiresApi;
 
 import com.ryan.github.view.base.FastOpenApi;
 import com.ryan.github.view.base.WebViewCache;
@@ -25,14 +15,18 @@ import com.ryan.github.view.config.FastCacheMode;
 import com.ryan.github.view.offline.Destroyable;
 import com.ryan.github.view.offline.ResourceInterceptor;
 import com.ryan.github.view.utils.LogUtils;
+import com.tencent.smtt.export.external.interfaces.ClientCertRequest;
+import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
+import com.tencent.smtt.export.external.interfaces.SslError;
+import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
+import com.tencent.smtt.export.external.interfaces.WebResourceError;
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
+import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 
-/**
- * WebViewClient decorator for intercepting resource loading.
- * <p>
- * Created by Ryan
- * 2018/2/7 下午3:39
- */
-class InnerFastClient extends WebViewClient implements FastOpenApi, Destroyable {
+public class InnerX5FastClient extends WebViewClient implements FastOpenApi, Destroyable {
 
     private static final String SCHEME_HTTP = "http";
     private static final String SCHEME_HTTPS = "https";
@@ -41,16 +35,16 @@ class InnerFastClient extends WebViewClient implements FastOpenApi, Destroyable 
     private WebViewCache mWebViewCache;
     private final int mWebViewCacheMode;
     private final String mUserAgent;
-    private FastWebView mOwner;
+    private FastX5WebView mOwner;
     private boolean hasDestroy = false;
 
-    InnerFastClient(FastWebView owner) {
+    InnerX5FastClient(FastX5WebView owner) {
         mOwner = owner;
         hasDestroy = false;
         WebSettings settings = owner.getSettings();
         mWebViewCacheMode = settings.getCacheMode();
         mUserAgent = settings.getUserAgentString();
-        mWebViewCache = new WebViewCacheImpl(owner.getContext());
+        mWebViewCache = new X5WebViewCacheImpl(owner.getContext());
     }
 
     void updateProxyClient(WebViewClient webViewClient) {

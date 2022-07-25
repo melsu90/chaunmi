@@ -6,9 +6,9 @@ package com.ryan.github.view.offline;
  * Created by Ryan
  * on 2020/6/11
  */
-class PhraseList {
+public class PhraseList {
 
-    static String getPhrase(int statusCode) {
+    static public String getPhrase(int statusCode) {
         switch (statusCode) {
             case 100:
                 return "Continue";

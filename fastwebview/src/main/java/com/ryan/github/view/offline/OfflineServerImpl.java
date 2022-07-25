@@ -2,12 +2,10 @@ package com.ryan.github.view.offline;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.webkit.WebResourceResponse;
 
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.FastCacheMode;
-import com.ryan.github.view.utils.AssetsLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +23,10 @@ public class OfflineServerImpl implements OfflineServer {
     private List<ResourceInterceptor> mDefaultModeChainList;
     private WebResourceResponseGenerator mResourceResponseGenerator;
 
-    public OfflineServerImpl(Context context, CacheConfig cacheConfig) {
+    public OfflineServerImpl(Context context, CacheConfig cacheConfig, WebResourceResponseGenerator webResponseGenerator) {
         mContext = context.getApplicationContext();
         mCacheConfig = cacheConfig;
-        mResourceResponseGenerator = new DefaultWebResponseGenerator();
+        mResourceResponseGenerator = webResponseGenerator;
     }
 
     /**
@@ -48,7 +46,7 @@ public class OfflineServerImpl implements OfflineServer {
             if(useAssetsInterceptor) {
                 interceptors.add(new AssetResourceInterceptor(context, cacheConfig));
             }
-            interceptors.add(MemResourceInterceptor.getInstance(cacheConfig));
+            interceptors.add(new MemResourceInterceptor(cacheConfig));
             interceptors.add(new DiskResourceInterceptor(cacheConfig));
             interceptors.add(new ForceRemoteResourceInterceptor(context, cacheConfig));
             mForceModeChainList = interceptors;
@@ -73,7 +71,7 @@ public class OfflineServerImpl implements OfflineServer {
     }
 
     @Override
-    public WebResourceResponse get(CacheRequest request) {
+    public Object get(CacheRequest request) {
         boolean isForceMode = request.isForceMode();
         Context context = mContext;
         CacheConfig config = mCacheConfig;
@@ -94,6 +92,13 @@ public class OfflineServerImpl implements OfflineServer {
     public synchronized void destroy() {
         destroyAll(mDefaultModeChainList);
         destroyAll(mForceModeChainList);
+        destroyAll(mBaseInterceptorList);
+        mDefaultModeChainList.clear();
+        mForceModeChainList.clear();
+        mBaseInterceptorList.clear();
+        mDefaultModeChainList = null;
+        mForceModeChainList = null;
+        mBaseInterceptorList = null;
     }
 
     private WebResource callChain(List<ResourceInterceptor> interceptors, CacheRequest request) {

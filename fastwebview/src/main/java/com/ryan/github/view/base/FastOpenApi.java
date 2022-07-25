@@ -1,4 +1,4 @@
-package com.ryan.github.view;
+package com.ryan.github.view.base;
 
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.config.FastCacheMode;

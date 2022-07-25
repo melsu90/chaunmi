@@ -40,7 +40,7 @@ public class OkHttpClientProvider {
     private void createOkHttpClient(Context context) {
         String dir = context.getCacheDir() + File.separator + CACHE_OKHTTP_DIR_NAME;
         mClient = new OkHttpClient.Builder()
-                .cookieJar(FastCookieManager.getInstance().getCookieJar(context))
+                .cookieJar(FastCookieManager.getInstance().getCookieJar())
                 .cache(new Cache(new File(dir), OKHTTP_CACHE_SIZE))
                 .readTimeout(20, TimeUnit.SECONDS)
                 .writeTimeout(20, TimeUnit.SECONDS)

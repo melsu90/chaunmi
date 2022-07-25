@@ -9,6 +9,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.ryan.github.view.base.FastOpenApi;
 import com.ryan.github.view.config.CacheConfig;
 import com.ryan.github.view.config.FastCacheMode;
 import com.ryan.github.view.cookie.FastCookieManager;
@@ -68,16 +69,20 @@ public class FastWebView extends WebView implements FastOpenApi {
 
 
     public void release() {
+        LogUtils.e(" release ");
         stopLoading();
         loadUrl("");
         setRecycled(true);
         setWebViewClient(null);
+        super.setWebViewClient(null);
         setWebChromeClient(null);
         WebSettings settings = getSettings();
         settings.setJavaScriptEnabled(false);
         settings.setBlockNetworkImage(false);
         clearHistory();
         clearCache(true);
+        int childCount =  getChildCount();
+        LogUtils.e(" release children: " + childCount);
         removeAllViews();
         ViewParent viewParent = this.getParent();
         if (viewParent != null && viewParent instanceof ViewGroup) {
@@ -85,6 +90,7 @@ public class FastWebView extends WebView implements FastOpenApi {
         }
         if (mFastClient != null) {
             mFastClient.destroy();
+            mFastClient = null;
         }
         getFastCookieManager().destroy();
     }
@@ -167,11 +173,11 @@ public class FastWebView extends WebView implements FastOpenApi {
         return !mRecycled && super.canGoBack();
     }
 
-    boolean isRecycled() {
+    public boolean isRecycled() {
         return mRecycled;
     }
 
-    void setRecycled(boolean recycled) {
+    public void setRecycled(boolean recycled) {
         this.mRecycled = recycled;
     }
 

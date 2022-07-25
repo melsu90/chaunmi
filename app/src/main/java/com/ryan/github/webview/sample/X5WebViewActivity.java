@@ -1,5 +1,7 @@
 package com.ryan.github.webview.sample;
 
+import static com.ryan.github.webview.sample.MainActivity.sUseWebViewPool;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -8,28 +10,29 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
 import com.google.gson.Gson;
-import com.ryan.github.view.FastWebView;
 import com.ryan.github.view.FastWebViewPool;
 import com.ryan.github.view.WebResource;
 import com.ryan.github.view.config.CacheConfig;
-import com.ryan.github.view.config.DefaultMimeTypeFilter;
 import com.ryan.github.view.config.FastCacheMode;
 import com.ryan.github.view.cookie.CookieInterceptor;
 import com.ryan.github.view.cookie.FastCookieManager;
 import com.ryan.github.view.offline.Chain;
 import com.ryan.github.view.offline.ResourceInterceptor;
 import com.ryan.github.view.utils.LogUtils;
+import com.ryan.github.view.x5.FastX5WebView;
+import com.tencent.smtt.export.external.interfaces.SslError;
+import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
+import com.tencent.smtt.export.external.interfaces.WebResourceError;
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
+import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
+import com.tencent.smtt.sdk.CookieManager;
+import com.tencent.smtt.sdk.CookieSyncManager;
+import com.tencent.smtt.sdk.QbSdk;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 
 import java.io.File;
 import java.util.HashMap;
@@ -39,36 +42,41 @@ import java.util.Map;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-import static com.ryan.github.webview.sample.MainActivity.sUseWebViewPool;
+public class X5WebViewActivity extends Activity {
 
-/**
- * Created by Ryan
- * at 2019/11/4
- */
-public class WebViewActivity extends Activity {
-
-    private static final String TAG = "FastWebView_activity";
-    private FastWebView fastWebView;
+    private static final String TAG = "FastWebView_X5_activity";
+    private FastX5WebView fastWebView;
     private long initStartTime;
     private long startTime;
 
-    public static final String url = "https://www.baidu.com/";  //"http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
+    public static final String url =  "https://www.baidu.com/"; // "http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FastWebView.setDebug(true);
+        QbSdk.forceSysWebView();
+        LogUtils.d("------------isX5Core:   " + QbSdk.isX5Core() + " -----------------");
+        LogUtils.d("------------isInitX5:   " + QbSdk.getIsInitX5Environment() + " -----------------");
+
+
+        FastX5WebView.setDebug(true);
         LogUtils.d("------------- start once load -------------");
         startTime = SystemClock.uptimeMillis();
         initStartTime = SystemClock.uptimeMillis();
         if (sUseWebViewPool) {
-            fastWebView = FastWebViewPool.acquire(this);
+            fastWebView = FastWebViewPool.acquireX5(this);
         } else {
             LogUtils.d("create new webview instance.");
-            fastWebView = new FastWebView(this);
+            fastWebView = new FastX5WebView(this);
         }
-        fastWebView.setWebChromeClient(new MonitorWebChromeClient());
+
+        LogUtils.d("------------extension:   " + (fastWebView.getX5WebViewExtension() != null) + " -----------------");
+        LogUtils.d("------------isX5Core:   " +  fastWebView.getIsX5Core() + " -----------------");
+
+        LogUtils.d("------------version:   " +  QbSdk.getTbsVersion(this) + ",sdk:  " + QbSdk.getTbsSdkVersion() + " -----------------");
+
+    //    fastWebView.setWebChromeClient(new WebViewActivity.MonitorWebChromeClient());
         fastWebView.setWebViewClient(new MonitorWebViewClient());
         setContentView(fastWebView);
         fastWebView.setFocusable(true);
@@ -83,6 +91,7 @@ public class WebViewActivity extends Activity {
         webSettings.setBuiltInZoomControls(false);
         webSettings.setDisplayZoomControls(false);
         webSettings.setDefaultTextEncodingName("UTF-8");
+
         webSettings.setBlockNetworkImage(true);
 
         // 设置正确的cache mode以支持离线加载
@@ -97,13 +106,13 @@ public class WebViewActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.setAcceptThirdPartyCookies(fastWebView, true);
-            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+            webSettings.setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         }
 
         CacheConfig config = new CacheConfig.Builder(this)
                 .setCacheDir(getCacheDir() + File.separator + "custom")
-        //        .setExtensionFilter(new CustomMimeTypeFilter())
-        //        .setAssetsDir("static")
+                //        .setExtensionFilter(new CustomMimeTypeFilter())
+                //        .setAssetsDir("static")
                 .build();
         fastWebView.setCacheMode(FastCacheMode.FORCE, config);
 
@@ -166,12 +175,24 @@ public class WebViewActivity extends Activity {
         super.onDestroy();
         if (fastWebView != null) {
             if (sUseWebViewPool) {
-                FastWebViewPool.release(fastWebView);
+                FastWebViewPool.releaseX5(fastWebView);
             } else {
                 fastWebView.destroy();
             }
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (fastWebView.canGoBack()) {
+                fastWebView.goBack();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     public class MonitorWebViewClient extends WebViewClient {
 
@@ -199,38 +220,42 @@ public class WebViewActivity extends Activity {
         }
 
         @Override
+        public void onReceivedError(WebView webView, int i, String s, String s1) {
+            super.onReceivedError(webView, i, s, s1);
+            LogUtils.e(" onReceivedError:  " + s);
+        }
+
+        @Override
+        public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
+            super.onReceivedError(webView, webResourceRequest, webResourceError);
+            LogUtils.e(" onReceivedError:  ");
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView webView, WebResourceRequest webResourceRequest, WebResourceResponse webResourceResponse) {
+            super.onReceivedHttpError(webView, webResourceRequest, webResourceResponse);
+            LogUtils.e(" onReceivedHttpError:  ");
+        }
+
+        @Override
+        public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
+            super.onReceivedSslError(webView, sslErrorHandler, sslError);
+            LogUtils.e(" onReceivedSslError:  ");
+        }
+
+        @Override
+        public void onDetectedBlankScreen(String s, int i) {
+            super.onDetectedBlankScreen(s, i);
+            LogUtils.e(" onDetectedBlankScreen:  " + s);
+        }
+
+        @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             if (first) {
                 LogUtils.d("init cost time: " + (SystemClock.uptimeMillis() - initStartTime));
                 first = false;
             }
             return super.shouldInterceptRequest(view, request);
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (fastWebView.canGoBack()) {
-                fastWebView.goBack();
-                return true;
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public class MonitorWebChromeClient extends WebChromeClient {
-
-        @Override
-        public void onReceivedTitle(WebView view, String title) {
-            super.onReceivedTitle(view, title);
-            Log.d(TAG, "white screen time: " + (SystemClock.uptimeMillis() - startTime));
-        }
-    }
-
-    public class CustomMimeTypeFilter extends DefaultMimeTypeFilter {
-        CustomMimeTypeFilter() {
-            addMimeType("text/html");
         }
     }
 }

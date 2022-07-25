@@ -11,6 +11,9 @@ import com.ryan.github.view.utils.LogUtils;
 
 import java.io.InputStream;
 
+/**
+ * 加载asset资源
+ */
 public class AssetResourceInterceptor implements Destroyable, ResourceInterceptor {
     private CacheConfig mCacheConfig;
     private Context mContext;

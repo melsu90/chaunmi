@@ -4,7 +4,7 @@ import androidx.collection.LruCache;
 
 import com.ryan.github.view.WebResource;
 
-public class LruCacheManager {
+public class LruCacheManager implements Destroyable {
 
     private LruCache<String, WebResource> mLruCache;
     private static volatile LruCacheManager sInstance;
@@ -72,6 +72,15 @@ public class LruCacheManager {
                 size = value.getOriginBytes().length;
             }
             return size;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        hasInit = false;
+        if (mLruCache != null) {
+            mLruCache.evictAll();
+            mLruCache = null;
         }
     }
 }

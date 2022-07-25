@@ -8,7 +8,7 @@ import android.webkit.WebResourceResponse;
  */
 public interface OfflineServer {
 
-    WebResourceResponse get(CacheRequest request);
+    Object get(CacheRequest request);
 
     void addResourceInterceptor(ResourceInterceptor interceptor);
 

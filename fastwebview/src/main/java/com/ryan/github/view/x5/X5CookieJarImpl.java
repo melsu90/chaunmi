@@ -1,17 +1,23 @@
-package com.ryan.github.view.cookie;
+package com.ryan.github.view.x5;
+
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.ryan.github.view.base.BaseCookieJarImpl;
+import com.ryan.github.view.cookie.CookieInterceptor;
+import com.ryan.github.view.cookie.FastCookieManager;
 import com.tencent.smtt.sdk.CookieManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-public class CookieJarImpl extends BaseCookieJarImpl {
+public class X5CookieJarImpl extends BaseCookieJarImpl {
 
-
-    public CookieJarImpl() {
+    public X5CookieJarImpl() {
         super();
     }
 

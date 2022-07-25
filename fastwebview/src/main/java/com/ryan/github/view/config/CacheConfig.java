@@ -3,6 +3,7 @@ package com.ryan.github.view.config;
 import android.content.Context;
 
 import com.ryan.github.view.utils.AppVersionUtil;
+import com.ryan.github.view.utils.LogUtils;
 import com.ryan.github.view.utils.MemorySizeCalculator;
 
 import java.io.File;
