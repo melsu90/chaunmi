@@ -1,7 +1,8 @@
 package com.chaunmi.fastwebview.view.system;
 
+import android.webkit.CookieManager;
+
 import com.chaunmi.fastwebview.view.base.BaseCookieJarImpl;
-import com.tencent.smtt.sdk.CookieManager;
 
 import java.util.List;
 
