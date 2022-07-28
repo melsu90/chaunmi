@@ -4,10 +4,11 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.chaunmi.fastwebview.okhttp.OkHttpClientProvider;
+import com.chaunmi.fastwebview.utils.AppVersionUtil;
 import com.chaunmi.fastwebview.utils.HeaderUtils;
 import com.chaunmi.fastwebview.utils.LogUtils;
 import com.chaunmi.fastwebview.view.base.WebResource;
-import com.ryan.github.view.webview.BuildConfig;
+import com.chaunmi.fastwebview.webview.BuildConfig;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -29,7 +30,6 @@ import static java.net.HttpURLConnection.HTTP_NOT_MODIFIED;
 public class OkHttpResourceLoader implements ResourceLoader {
 
     private static final String HEADER_USER_AGENT = "User-Agent";
-    private static final String DEFAULT_USER_AGENT = "FastWebView" + BuildConfig.VERSION_NAME;
     private Context mContext;
 
     public OkHttpResourceLoader(Context context) {
@@ -45,7 +45,7 @@ public class OkHttpResourceLoader implements ResourceLoader {
         CacheControl cacheControl = getCacheControl(sourceRequest.getWebViewCache(), isCacheByOkHttp);
         String userAgent = sourceRequest.getUserAgent();
         if (TextUtils.isEmpty(userAgent)) {
-            userAgent = DEFAULT_USER_AGENT;
+            userAgent = "FastWebView_" + AppVersionUtil.getVersionName(mContext);
         }
         Locale locale = Locale.getDefault();
         String acceptLanguage;
