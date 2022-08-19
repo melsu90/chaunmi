@@ -104,6 +104,7 @@ public class WebViewActivity extends Activity {
                 .setCacheDir(getCacheDir() + File.separator + "custom")
         //        .setExtensionFilter(new CustomMimeTypeFilter())
         //        .setAssetsDir("static")
+                .setOtherStorageDir(getExternalCacheDir().getPath())
                 .build();
         fastWebView.setCacheMode(FastCacheMode.FORCE, config);
 

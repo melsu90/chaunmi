@@ -39,12 +39,19 @@ public class OfflineServerImpl implements OfflineServer {
             if(useAssetsInterceptor) {
                 interceptorsCount += 1;
             }
+            boolean useStorageInterceptor = !TextUtils.isEmpty(cacheConfig.getOtherStorageDir());
+            if(useStorageInterceptor) {
+                interceptorsCount += 1;
+            }
             List<ResourceInterceptor> interceptors = new ArrayList<>(interceptorsCount);
             if (mBaseInterceptorList != null && !mBaseInterceptorList.isEmpty()) {
                 interceptors.addAll(mBaseInterceptorList);
             }
             if(useAssetsInterceptor) {
                 interceptors.add(new AssetResourceInterceptor(context, cacheConfig));
+            }
+            if(useStorageInterceptor) {
+                interceptors.add(new StorageResourceInterceptor(cacheConfig));
             }
             interceptors.add(new MemResourceInterceptor(cacheConfig));
             interceptors.add(new DiskResourceInterceptor(cacheConfig));

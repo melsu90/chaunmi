@@ -102,35 +102,12 @@ public class AssetsLoader {
     }
 
     /**
-     * 获取url的path信息
-     *
-     * @param url
-     * @return
-     */
-    private String getUrlPath(String url) {
-        String path = "";
-        try {
-            URL uri = new URL(url);
-            path = uri.getPath();
-            if (path.startsWith("/")) {
-                if (path.length() == 1) {
-                    return path;
-                }
-                path = path.substring(1);
-            }
-        } catch (MalformedURLException e) {
-            LogUtils.e(e.toString());
-        }
-        return path;
-    }
-
-    /**
      * @param context
      * @param url
      * @return
      */
     public InputStream getResByUrl(Context context, String url) {
-        String path = getUrlPath(url);
+        String path = StorageLoader.getUrlPath(url);
         if (TextUtils.isEmpty(path) || context == null || TextUtils.isEmpty(mAssetsDir)) {
             return null;
         }
