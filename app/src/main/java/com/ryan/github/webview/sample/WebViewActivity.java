@@ -52,7 +52,7 @@ public class WebViewActivity extends Activity {
     private long initStartTime;
     private long startTime;
 
-    public static final String url = "https://www.baidu.com/";  //"http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
+    public static final String url = "https://www.google.com/";  //"http://192.168.10.37:5500/h5/dist/index.html#/index"; //  "https://xw.qq.com/"; // "https://github.com/Ryan-Shz";
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
