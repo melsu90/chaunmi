@@ -34,11 +34,10 @@ jobs:
       - name: Run Build
         run: |
           chmod +x gradlew
-          ./gradlew tasks
           ./gradlew assembleDebug
       # Uploads the folder or file in path to GitHub
       - name: Upload Apk
         uses: actions/upload-artifact@v2
         with:
           name: DebugApp
-          path: app\build\outputs\apk\debug
+          path: app/build/outputs/apk/debug
